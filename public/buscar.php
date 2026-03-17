@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/conecta-escola/assets/css/style.css">
-    <title>Buscar | Conecta Escola</title>
+    <title>Buscar | NetFriends</title>
     <style>
         .search-wrap { position: relative; }
         #live-results {
@@ -77,7 +77,7 @@ if(isset($_GET['ajax']) && $_GET['ajax'] === '1'){
 ?>
 
 <nav class="navbar">
-    <div class="logo">Conecta Escola</div>
+    <div class="logo">NetFriends </div>
     <div class="menu">
         <a href="index.php">🏠 Feed</a>
         <a href="perfil.php">👤 Perfil</a>

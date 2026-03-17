@@ -7,12 +7,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/conecta-escola/assets/css/style.css">
-    <title>Login | Conecta Escola</title>
+    <title>Login | NetFriends</title>
 </head>
 <body class="auth-page">
 
 <div class="auth-box">
-    <div class="auth-brand">Conecta Escola</div>
+    <div class="auth-brand">NetFriends</div>    
     <p class="auth-subtitle">Acesse sua conta para continuar</p>
 
     <?php if(isset($_GET['erro'])): ?>

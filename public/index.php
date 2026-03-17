@@ -19,7 +19,8 @@ $userId = $user['id'];
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/conecta-escola/assets/css/style.css">
-    <title>Feed | Conecta Escola</title>
+    <title>Feed | NetFriends
+    </title>
     <style>
         /* Like button states */
         .like-btn {
@@ -65,7 +66,7 @@ $userId = $user['id'];
 <body>
 
 <nav class="navbar">
-    <div class="logo">Conecta Escola</div>
+    <div class="logo">NetFriends</div>
     <div class="menu">
         <a href="perfil.php">👤 Perfil</a>
         <a href="buscar.php">🔍 Buscar</a>
