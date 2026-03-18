@@ -2,6 +2,15 @@
 session_start();
 require_once "../config/db.php";
 
+// Garantir que tabela de seguidores exista
+$conn->exec("CREATE TABLE IF NOT EXISTS seguidores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    seguidor_id INT NOT NULL,
+    seguido_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY ux_seguidores (seguidor_id, seguido_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
 if(!isset($_SESSION['user'])){
     header("Location: login.php");
     exit();
@@ -61,6 +70,49 @@ $userId = $user['id'];
 
         /* Post anchor offset (navbar height) */
         .post { scroll-margin-top: 80px; }
+
+    /* Feed com janela lateral de sugestões */
+    .feed-layout {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+    }
+    @media (max-width: 950px) {
+        .feed-layout { grid-template-columns: 1fr; }
+        .feed-sidebar { order: -1; }
+    }
+
+    .feed-sidebar {
+        position: sticky;
+        top: 90px;
+        align-self: start;
+    }
+    .suggestions-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 14px;
+        margin-bottom: 20px;
+    }
+    .suggestion-item {
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 0; border-bottom: 1px solid var(--border);
+    }
+    .suggestion-item:last-child { border-bottom: 0; }
+    .suggestion-avatar {
+        width: 42px; height: 42px; border-radius: 50%; overflow: hidden;
+        background: linear-gradient(135deg,var(--accent),var(--accent-2));
+        color: white; font-weight: 800; display:flex; align-items:center; justify-content:center;
+    }
+    .suggestion-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .suggestion-name { flex: 1; font-weight: 700; font-size: .95rem; }
+    .suggest-btn {
+        background: var(--accent-2); color: #fff; border: none; border-radius: var(--radius-pill);
+        padding: 6px 10px; font-size:.78rem; cursor:pointer;
+    }
+    .suggest-btn:hover { opacity: .9; }
+
+    .post { scroll-margin-top: 80px; }
     </style>
 </head>
 <body>
@@ -85,7 +137,17 @@ $userId = $user['id'];
     </div>
 
     <div class="section-title">Feed</div>
-
+    <?php if(isset($_GET['follow'])): ?>
+        <?php if($_GET['follow'] === 'followed'): ?>
+            <div class="alert alert-success">✅ Seguindo! Agora você acompanha mais uma pessoa.</div>
+        <?php elseif($_GET['follow'] === 'unfollowed'): ?>
+            <div class="alert alert-info">ℹ️ Não está mais seguindo.</div>
+        <?php elseif($_GET['follow'] === 'error'): ?>
+            <div class="alert alert-error">⚠️ Erro ao atualizar seguimento. Tente novamente.</div>
+        <?php endif; ?>
+    <?php endif; ?>
+    <div class="feed-layout">
+        <div class="feed-main">
     <?php
     $sql = $conn->query("
         SELECT postagens.*, usuarios.nome, usuarios.foto
@@ -94,6 +156,15 @@ $userId = $user['id'];
         ORDER BY data_postagem DESC
     ");
     $posts = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+    $suggestionsStmt = $conn->prepare("SELECT u.id, u.nome, u.foto, u.turma,
+            EXISTS(SELECT 1 FROM seguidores s WHERE s.seguidor_id = ? AND s.seguido_id = u.id) AS is_following
+        FROM usuarios u
+        WHERE u.id <> ?
+        ORDER BY RAND()
+        LIMIT 5");
+    $suggestionsStmt->execute([$userId, $userId]);
+    $suggestions = $suggestionsStmt->fetchAll(PDO::FETCH_ASSOC);
 
     if(empty($posts)):
     ?>
@@ -198,6 +269,42 @@ $userId = $user['id'];
         </div>
 
     <?php endforeach; endif; ?>
+
+        </div> <!-- /feed-main -->
+
+        <aside class="feed-sidebar">
+            <div class="suggestions-card">
+                <h3>Quem seguir</h3>
+                <?php if(empty($suggestions)): ?>
+                    <p style="font-size:.9rem;color:var(--ink-3);">Parece que não há sugestões no momento.</p>
+                <?php else: ?>
+                    <?php foreach($suggestions as $s): ?>
+                        <div class="suggestion-item">
+                            <div class="suggestion-avatar">
+                                <?php if(!empty($s['foto'])): ?>
+                                    <img src="/conecta-escola/uploads/fotos/<?php echo htmlspecialchars($s['foto']); ?>" alt="">
+                                <?php else: ?>
+                                    <?php echo mb_strtoupper(mb_substr($s['nome'], 0, 1)); ?>
+                                <?php endif; ?>
+                            </div>
+                            <div class="suggestion-name">
+                                <?php echo htmlspecialchars($s['nome']); ?><br>
+                                <small style="color:var(--ink-3);">@<?php echo ltrim(htmlspecialchars($s['turma']), '@'); ?></small>
+                            </div>
+                            <form action="../controllers/followController.php" method="POST" style="margin:0;">
+                                <input type="hidden" name="target_id" value="<?php echo (int)$s['id']; ?>">
+                                <button type="submit" class="suggest-btn" style="padding:6px 10px;">
+                                    <?php echo $s['is_following'] ? 'Seguindo' : 'Seguir'; ?>
+                                </button>
+                            </form>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                <p style="font-size:.8rem;color:var(--ink-3);margin-top:10px;">Busque mais colegas em <a href="buscar.php">Buscar</a>.</p>
+            </div>
+        </aside>
+
+    </div> <!-- /feed-layout -->
 
 </div>
 

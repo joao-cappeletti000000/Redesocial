@@ -2,18 +2,50 @@
 session_start();
 require_once "../config/db.php";
 
+// Garantir que tabela de seguidores exista
+$conn->exec("CREATE TABLE IF NOT EXISTS seguidores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    seguidor_id INT NOT NULL,
+    seguido_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY ux_seguidores (seguidor_id, seguido_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;");
+
 if(!isset($_SESSION['user'])){
     header("Location: login.php");
     exit();
 }
 
 $sessionUser = $_SESSION['user'];
-$id = $sessionUser['id'];
+$viewerId = $sessionUser['id'];
+$profileId = isset($_GET['id']) ? (int)$_GET['id'] : $viewerId;
 
 // Recarrega dados frescos do banco
 $stmt = $conn->prepare("SELECT * FROM usuarios WHERE id = ?");
-$stmt->execute([$id]);
+$stmt->execute([$profileId]);
 $user = $stmt->fetch();
+
+if(!$user){
+    header("Location: index.php");
+    exit();
+}
+
+$isOwnProfile = ($viewerId === $profileId);
+
+$followersStmt = $conn->prepare("SELECT COUNT(*) FROM seguidores WHERE seguido_id = ?");
+$followersStmt->execute([$profileId]);
+$followersCount = (int)$followersStmt->fetchColumn();
+
+$followingStmt = $conn->prepare("SELECT COUNT(*) FROM seguidores WHERE seguidor_id = ?");
+$followingStmt->execute([$profileId]);
+$followingCount = (int)$followingStmt->fetchColumn();
+
+$isFollowing = false;
+if(!$isOwnProfile){
+    $followedStmt = $conn->prepare("SELECT 1 FROM seguidores WHERE seguidor_id = ? AND seguido_id = ?");
+    $followedStmt->execute([$viewerId, $profileId]);
+    $isFollowing = (bool)$followedStmt->fetchColumn();
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -24,12 +56,12 @@ $user = $stmt->fetch();
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/conecta-escola/assets/css/style.css">
-    <title>Perfil — <?php echo htmlspecialchars($user['nome']); ?> | Conecta Escola</title>
+    <title>Perfil — <?php echo htmlspecialchars($user['nome']); ?> | NetFriends</title>
 </head>
 <body>
 
 <nav class="navbar">
-    <div class="logo">Conecta Escola</div>
+    <div class="logo">NetFriends</div>
     <div class="menu">
         <a href="index.php">🏠 Feed</a>
         <a href="buscar.php">🔍 Buscar</a>
@@ -47,6 +79,16 @@ $user = $stmt->fetch();
             <div class="alert alert-error">⚠️ Falha no upload. Verifique o arquivo e tente novamente.</div>
         <?php elseif($msg === 'db_error'): ?>
             <div class="alert alert-error">⚠️ Erro ao salvar no banco. Tente novamente.</div>
+        <?php elseif($msg === 'upload_error'): ?>
+            <div class="alert alert-error">⚠️ Falha no upload. Verifique o arquivo e tente novamente.
+                <?php if(isset($_GET['detail'])): ?>
+                    <br><small><?php echo htmlspecialchars($_GET['detail']); ?></small>
+                <?php endif; ?>
+            </div>
+        <?php elseif($msg === 'followed'): ?>
+            <div class="alert alert-success">✅ Você começou a seguir <?php echo htmlspecialchars($user['nome']); ?>.</div>
+        <?php elseif($msg === 'unfollowed'): ?>
+            <div class="alert alert-info">ℹ️ Você deixou de seguir <?php echo htmlspecialchars($user['nome']); ?>.</div>
         <?php endif; ?>
     <?php endif; ?>
 
@@ -62,11 +104,19 @@ $user = $stmt->fetch();
             ?>
             <img src="<?php echo $avatar; ?>" alt="Foto de <?php echo htmlspecialchars($user['nome']); ?>">
 
-            <form class="avatar-upload-form" action="../controllers/avatarController.php" method="POST" enctype="multipart/form-data">
-                <label for="foto" class="avatar-upload-label">📷 Alterar foto</label>
-                <input id="foto" type="file" name="foto" accept="image/*" required>
-                <button type="submit" name="upload_foto">Enviar</button>
+            <?php if($isOwnProfile): ?>
+            <form class="avatar-upload-form" action="../controllers/avatarController.php" method="POST" enctype="multipart/form-data" id="avatarForm">
+                <label for="foto" class="avatar-upload-label" title="Clique para alterar a foto">📷 Alterar foto</label>
+                <input id="foto" type="file" name="foto" accept="image/*" style="display:none;" onchange="document.getElementById('avatarForm').submit();">
+                <input type="hidden" name="upload_foto" value="1">
             </form>
+            <script>
+                document.querySelector('.avatar-upload-label').addEventListener('click', function(e){
+                    e.preventDefault();
+                    document.getElementById('foto').click();
+                });
+            </script>
+            <?php endif; ?>
         </div>
 
         <!-- Info -->
@@ -77,7 +127,7 @@ $user = $stmt->fetch();
             <div class="profile-stats">
                 <?php
                 $totalPosts = $conn->prepare("SELECT COUNT(*) FROM postagens WHERE id_usuario = ?");
-                $totalPosts->execute([$id]);
+                $totalPosts->execute([$profileId]);
                 $totalPosts = $totalPosts->fetchColumn();
 
                 $totalCurtidas = $conn->prepare("
@@ -85,7 +135,7 @@ $user = $stmt->fetch();
                     JOIN postagens ON postagens.id = curtidas.id_postagem
                     WHERE postagens.id_usuario = ?
                 ");
-                $totalCurtidas->execute([$id]);
+                $totalCurtidas->execute([$profileId]);
                 $totalCurtidas = $totalCurtidas->fetchColumn();
                 ?>
                 <div>
@@ -96,9 +146,26 @@ $user = $stmt->fetch();
                     <b><?php echo $totalCurtidas; ?></b>
                     <span>curtidas</span>
                 </div>
+                <div>
+                    <b><?php echo $followingCount; ?></b>
+                    <span>seguindo</span>
+                </div>
+                <div>
+                    <b><?php echo $followersCount; ?></b>
+                    <span>seguidores</span>
+                </div>
             </div>
 
-            <button class="edit-btn">✏️ Editar Perfil</button>
+            <?php if($isOwnProfile): ?>
+                <button class="edit-btn">✏️ Editar Perfil</button>
+            <?php else: ?>
+                <form action="../controllers/followController.php" method="POST" style="display:inline;">
+                    <input type="hidden" name="target_id" value="<?php echo $profileId; ?>">
+                    <button type="submit" class="edit-btn" style="padding:8px 14px;">
+                        <?php echo $isFollowing ? '✅ Seguindo' : '➕ Seguir'; ?>
+                    </button>
+                </form>
+            <?php endif; ?>
         </div>
 
     </div><!-- /profile-header -->
@@ -112,7 +179,7 @@ $user = $stmt->fetch();
         WHERE id_usuario = ?
         ORDER BY data_postagem DESC
     ");
-    $posts->execute([$id]);
+    $posts->execute([$profileId]);
     $posts = $posts->fetchAll();
     ?>
 

@@ -1,0 +1,128 @@
+[2026-03-18 18:22:01]
+POST keys: upload_foto
+FILES: Array
+(
+    [foto] => Array
+        (
+            [name] => 044.png
+            [full_path] => 044.png
+            [type] => image/png
+            [tmp_name] => C:\xampp\tmp\phpF2A0.tmp
+            [error] => 0
+            [size] => 18283
+        )
+
+)
+
+upload_foto set: sim
+foto set: sim
+erro arquivo: 0
+------------------------------------------------------------
+[2026-03-18 18:22:01] SAÍDA: Pasta sem permissão de escrita — C:\xampp\htdocs\conecta-escola\controllers/../uploads/fotos/
+[2026-03-18 18:27:08]
+POST keys: upload_foto
+FILES: Array
+(
+    [foto] => Array
+        (
+            [name] => 044.png
+            [full_path] => 044.png
+            [type] => image/png
+            [tmp_name] => C:\xampp\tmp\phpA1CA.tmp
+            [error] => 0
+            [size] => 18283
+        )
+
+)
+
+upload_foto set: sim
+foto set: sim
+erro arquivo: 0
+------------------------------------------------------------
+[2026-03-18 18:27:08] SAÍDA: Falha ao criar pasta — C:\xampp\htdocs\conecta-escola\controllers/../uploads/fotos/
+[2026-03-18 18:27:10]
+POST keys: upload_foto
+FILES: Array
+(
+    [foto] => Array
+        (
+            [name] => 044.png
+            [full_path] => 044.png
+            [type] => image/png
+            [tmp_name] => C:\xampp\tmp\phpAAE3.tmp
+            [error] => 0
+            [size] => 18283
+        )
+
+)
+
+upload_foto set: sim
+foto set: sim
+erro arquivo: 0
+------------------------------------------------------------
+[2026-03-18 18:27:10] SAÍDA: Falha ao criar pasta — C:\xampp\htdocs\conecta-escola\controllers/../uploads/fotos/
+[2026-03-18 18:28:54]
+POST keys: upload_foto
+FILES: Array
+(
+    [foto] => Array
+        (
+            [name] => Captura de tela 2026-03-04 164404.png
+            [full_path] => Captura de tela 2026-03-04 164404.png
+            [type] => image/png
+            [tmp_name] => C:\xampp\tmp\php3FEB.tmp
+            [error] => 0
+            [size] => 293501
+        )
+
+)
+
+upload_foto set: sim
+foto set: sim
+erro arquivo: 0
+------------------------------------------------------------
+[2026-03-18 18:28:54] SAÍDA: Falha ao criar pasta — C:\xampp\htdocs\conecta-escola\controllers/../uploads/fotos/
+[2026-03-18 20:09:07]
+POST keys: upload_foto
+FILES: Array
+(
+    [foto] => Array
+        (
+            [name] => ssssssssssssssssssssss.png
+            [full_path] => ssssssssssssssssssssss.png
+            [type] => image/png
+            [tmp_name] => C:\xampp\tmp\phpFFF6.tmp
+            [error] => 0
+            [size] => 455141
+        )
+
+)
+
+upload_foto set: sim
+foto set: sim
+erro arquivo: 0
+------------------------------------------------------------
+[2026-03-18 20:09:07] SUCESSO: foto salva — avatar_10_1773860947.png
+------------------------------------------------------------
+[2026-03-18 20:10:08]
+POST keys: upload_foto
+FILES: Array
+(
+    [foto] => Array
+        (
+            [name] => unnamed.png
+            [full_path] => unnamed.png
+            [type] => image/png
+            [tmp_name] => C:\xampp\tmp\phpEF0A.tmp
+            [error] => 0
+            [size] => 5111
+        )
+
+)
+
+upload_foto set: sim
+foto set: sim
+erro arquivo: 0
+------------------------------------------------------------
+[2026-03-18 20:10:08] SUCESSO: foto salva — avatar_10_1773861008.png
+------------------------------------------------------------
