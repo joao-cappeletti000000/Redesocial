@@ -859,19 +859,149 @@ body.auth-page {
 .search-hint { font-size: .8rem; color: var(--ink-3); margin-top: 10px; padding-left: 4px; }
 
 /* ═══════════════════════════════════════════════
-   RESPONSIVO
+   RESPONSIVO — TABLET (≤ 860px)
    ═══════════════════════════════════════════════ */
-@media (max-width: 680px) {
-  .navbar { padding: 0 16px; }
-  .navbar .menu a { padding: 7px 10px; font-size: .82rem; }
-  .container, .search-page, .profile-page { padding-left: 14px; padding-right: 14px; }
-  .create-post, .post { padding: 16px; }
-  .profile-header { padding: 20px 18px; gap: 18px; }
-  .profile-info h2 { font-size: 1.2rem; }
-  .profile-stats { gap: 16px; }
+@media (max-width: 860px) {
+  .feed-layout { grid-template-columns: 1fr; }
+  .feed-sidebar {
+    position: static;
+    order: -1;
+  }
+  .suggestions-card {
+    /* No tablet/mobile exibe como lista horizontal rolável */
+    overflow-x: auto;
+  }
 }
 
+/* ═══════════════════════════════════════════════
+   RESPONSIVO — CELULAR (≤ 680px)
+   ═══════════════════════════════════════════════ */
+@media (max-width: 680px) {
+
+  /* ── Navbar ── */
+  .navbar {
+    padding: 0 14px;
+    height: 56px;
+  }
+  --navbar-h: 56px;
+  .navbar .logo { font-size: 1.15rem; }
+  .navbar .menu { gap: 2px; }
+  .navbar .menu a {
+    padding: 7px 10px;
+    font-size: .82rem;
+    gap: 5px;
+  }
+
+  /* ── Containers ── */
+  .container,
+  .search-page,
+  .profile-page {
+    padding: 16px 12px 60px;
+  }
+
+  /* ── Create post ── */
+  .create-post { padding: 14px; }
+  .create-post textarea { min-height: 60px; font-size: .93rem; }
+  .create-post button {
+    width: 100%;
+    float: none;
+    margin-top: 10px;
+    padding: 11px;
+  }
+
+  /* ── Post card ── */
+  .post { padding: 14px; }
+  .post-content { font-size: .9rem; }
+
+  /* ── Comentários ── */
+  .comment-form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+  .comment-form input { width: 100%; }
+  .comment-form button {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* ── Ações do post ── */
+  .post-actions { gap: 8px; flex-wrap: wrap; }
+  .like-btn { font-size: .82rem; padding: 6px 12px; }
+
+  /* ── Perfil ── */
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px 16px;
+    gap: 14px;
+  }
+  .profile-info { width: 100%; }
+  .profile-info h2 { font-size: 1.2rem; }
+  .profile-stats {
+    justify-content: center;
+    gap: 16px;
+  }
+  .profile-stats div { align-items: center; }
+  .edit-btn { width: 100%; }
+
+  /* ── Busca ── */
+  .search-bar {
+    flex-direction: column;
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .search-bar input { font-size: .93rem; }
+  .search-bar button {
+    width: 100%;
+    padding: 10px;
+    border-radius: var(--radius-md);
+  }
+  #live-results { border-radius: var(--radius-md); }
+
+  /* ── Resultados de busca ── */
+  .search-result-item { padding: 12px; gap: 10px; }
+  .search-result-badge { display: none; } /* esconde o badge em tela pequena */
+
+  /* ── Sugestões ── */
+  .suggestions-card { padding: 14px; }
+  .suggestion-item { padding: 8px 0; gap: 8px; }
+  .suggest-btn { padding: 5px 10px; font-size: .75rem; }
+
+  /* ── Section title ── */
+  .section-title { font-size: 1rem; }
+
+  /* ── Auth (login/cadastro) ── */
+  .auth-box {
+    padding: 32px 22px;
+    margin: 16px;
+    border-radius: var(--radius-md);
+  }
+  .auth-brand { font-size: 1.6rem; }
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVO — CELULAR PEQUENO (≤ 420px)
+   ═══════════════════════════════════════════════ */
 @media (max-width: 420px) {
-  .navbar .menu a span { display: none; }
-  .search-bar { padding: 5px 5px 5px 14px; }
+  /* Oculta texto dos links do menu, mantém emoji */
+  .navbar .menu a { font-size: 0; padding: 8px; }
+  .navbar .menu a::first-letter { font-size: 18px; }
+
+  /* Exibe apenas o emoji dos links */
+  .navbar .menu a[href*="index"]::before    { content: '🏠'; font-size: 18px; }
+  .navbar .menu a[href*="perfil"]::before   { content: '👤'; font-size: 18px; }
+  .navbar .menu a[href*="buscar"]::before   { content: '🔍'; font-size: 18px; }
+  .navbar .menu a[href*="logout"]::before   { content: '🚪'; font-size: 18px; }
+
+  .profile-stats { gap: 12px; }
+  .profile-stats b { font-size: .95rem; }
+
+  .live-badge { display: none; }
+
+  /* Posts grid do perfil menores */
+  .post-grid { padding: 14px; font-size: .88rem; }
 }

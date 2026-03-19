@@ -126,3 +126,25 @@ erro arquivo: 0
 ------------------------------------------------------------
 [2026-03-18 20:10:08] SUCESSO: foto salva — avatar_10_1773861008.png
 ------------------------------------------------------------
+[2026-03-19 18:47:46]
+POST keys: upload_foto
+FILES: Array
+(
+    [foto] => Array
+        (
+            [name] => ae31aa294867e165dae4d9b027ab09ef.jpg
+            [full_path] => ae31aa294867e165dae4d9b027ab09ef.jpg
+            [type] => image/jpeg
+            [tmp_name] => C:\xampp\tmp\php92B5.tmp
+            [error] => 0
+            [size] => 48062
+        )
+
+)
+
+upload_foto set: sim
+foto set: sim
+erro arquivo: 0
+------------------------------------------------------------
+[2026-03-19 18:47:46] SUCESSO: foto salva — avatar_12_1773942466.jpg
+------------------------------------------------------------
