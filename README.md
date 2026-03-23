@@ -97,7 +97,7 @@ Este projeto está licenciado sob a [MIT License](LICENSE) - veja o arquivo [LIC
 
 - **Autor**: João cappeletti e Pietro
 - **Email**: joao.cappeletti@aluno.senai.br e pietro.sehna@aluno.senai.br
-- **Issues**: [Abra uma issue](https://github.com/seu-usuario/conecta-escola/issues) para relatar bugs ou sugerir melhorias.
+
 
 ---
 
